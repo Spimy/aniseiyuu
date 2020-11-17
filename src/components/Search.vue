@@ -23,8 +23,9 @@ export default defineComponent({
   border: none;
   padding: 1rem 1.5rem;
   color: #ffffff;
-}
-.search::placeholder {
-  color: rgba(255, 255, 255, 0.31);
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.31);
+  }
 }
 </style>

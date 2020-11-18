@@ -72,13 +72,12 @@ h6 {
   letter-spacing: 0.1rem;
 }
 
-#app {
-  margin: 2rem 7rem;
-}
-
 main {
-  padding: 7rem 0;
-  margin: 0 auto;
+  margin: 0 7em;
   position: relative;
+
+  @media (max-width: 680px) {
+    margin: 0 2em;
+  }
 }
 </style>

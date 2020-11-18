@@ -1,9 +1,16 @@
 <template>
-  <div id="nav">
-    <h1>AniSeiyuu</h1>
-  </div>
+  <Header />
   <router-view />
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import Header from "@/components/Header.vue";
+
+export default defineComponent({
+  components: { Header }
+});
+</script>
 
 <style lang="scss">
 @font-face {
@@ -35,6 +42,10 @@ html,
 body {
   height: 100%;
   width: 100%;
+
+  --fade-transition: cubic-bezier(0.3, 0.42, 0.73, 0.82);
+  --btn-color: #3d2c7a;
+  --faded-purple: #3a3255;
 }
 
 html {
@@ -45,7 +56,7 @@ html {
 }
 
 body {
-  color: #f1f1f1;
+  color: #ffffff;
   background-color: #1e1b29;
   scroll-behavior: smooth;
 }

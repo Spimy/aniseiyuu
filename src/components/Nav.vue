@@ -1,6 +1,8 @@
 <template>
   <nav>
     <router-link :to="{ name: 'Home' }">Home</router-link>
+    <router-link :to="{ name: 'About' }">About</router-link>
+    <router-link :to="{ name: 'Contact' }">Contact</router-link>
   </nav>
 </template>
 
@@ -15,6 +17,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 nav {
   font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
 }
 
 a {
@@ -22,7 +27,6 @@ a {
   text-decoration: none;
   padding: 0.5em 1em;
   transition: background-color 0.3s var(--fade-transition);
-  margin-left: 1em;
 
   &:hover,
   &:focus {

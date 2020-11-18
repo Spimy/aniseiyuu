@@ -80,4 +80,53 @@ main {
     margin: 0 2em;
   }
 }
+
+// Transitions
+.fade {
+  &-enter-active,
+  &-leave-active {
+    transition: 0.1s var(--fade-transition);
+    transition-property: opacity;
+  }
+  &-enter-to,
+  &-leave-from {
+    opacity: 1;
+  }
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+  }
+}
+.bounceIn {
+  &-enter-active,
+  &-leave-active {
+    transition: 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.3);
+    transition-property: opacity, transform;
+  }
+  &-enter-to,
+  &-leave-from {
+    transform: scale(1);
+  }
+  &-enter-from,
+  &-leave-to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+.fall {
+  &-enter-active,
+  &-leave-active {
+    transition: 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.3);
+    transition-property: opacity, transform;
+  }
+  &-enter-to,
+  &-leave-from {
+    transform: scale(1) translateY(0);
+  }
+  &-enter-from,
+  &-leave-to {
+    transform: scale(0.9) translateY(-100%);
+    opacity: 0;
+  }
+}
 </style>

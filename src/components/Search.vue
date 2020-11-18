@@ -19,7 +19,7 @@ export default defineComponent({
 .search {
   font-size: 1em;
   font-family: "Berlin Sans FB Regular", sans-serif;
-  background-color: #3a3255;
+  background-color: var(--faded-purple);
   border: none;
   padding: 1rem 1.5rem;
   color: #ffffff;

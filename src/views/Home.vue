@@ -44,7 +44,8 @@ export default defineComponent({
     cursor: pointer;
     transition: box-shadow 0.3s var(--fade-transition);
 
-    &:hover {
+    &:hover,
+    &:focus {
       box-shadow: 0 0 0.8em 0.2em rgba(147, 59, 197, 0.2);
     }
   }

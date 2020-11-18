@@ -81,6 +81,18 @@ main {
   }
 }
 
+::-webkit-scrollbar {
+  width: 0.6em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #574b7d;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #3a364a;
+}
+
 // Transitions
 .fade {
   &-enter-active,

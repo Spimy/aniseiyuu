@@ -40,12 +40,16 @@ export default defineComponent({
     font-size: 1rem;
     padding: 0.25em 2.5em;
     cursor: pointer;
-    height: 25%;
+    transition: box-shadow 0.3s cubic-bezier(0.3, 0.42, 0.73, 0.82);
+
+    &:hover {
+      box-shadow: 0 0 0.8em 0.2em rgba(147, 59, 197, 0.2);
+    }
   }
 
   @media (max-width: 860px) {
     button {
-      flex: 1 0 100%;
+      width: 100%;
     }
   }
 }

@@ -2,7 +2,7 @@
   <main>
     <div class="search-container">
       <Search />
-      <button><fa icon="arrows-alt-h" /><br />Seiyuu</button>
+      <button><CompareArrow /><br />Seiyuu</button>
       <Search />
     </div>
   </main>
@@ -10,12 +10,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Search from "@/components/Search.vue"; // @ is an alias to /src
+import Search from "@/components/Search.vue";
+import CompareArrow from "@/assets/icons/CompareArrow.vue";
 
 export default defineComponent({
   name: "Home",
   components: {
-    Search
+    Search,
+    CompareArrow
   }
 });
 </script>
@@ -34,13 +36,13 @@ export default defineComponent({
 
   button {
     border: none;
-    background-color: #3d2c7a;
+    background-color: var(--btn-color);
     color: #ffffff;
     font-family: "Berlin Sans FB Regular", sans-serif;
     font-size: 1rem;
     padding: 0.25em 2.5em;
     cursor: pointer;
-    transition: box-shadow 0.3s cubic-bezier(0.3, 0.42, 0.73, 0.82);
+    transition: box-shadow 0.3s var(--fade-transition);
 
     &:hover {
       box-shadow: 0 0 0.8em 0.2em rgba(147, 59, 197, 0.2);

@@ -97,7 +97,7 @@ main {
 .fade {
   &-enter-active,
   &-leave-active {
-    transition: 0.1s var(--fade-transition);
+    transition: 0.2s var(--fade-transition);
     transition-property: opacity;
   }
   &-enter-to,

@@ -10,7 +10,7 @@ import { defineComponent } from "vue";
 import Nav from "@/components/Nav.vue";
 
 export default defineComponent({
-  name: "header",
+  name: "Header",
   components: { Nav }
 });
 </script>
@@ -18,6 +18,19 @@ export default defineComponent({
 <style lang="scss" scoped>
 header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  padding: 3em 7em;
+  gap: 1em 0.5em;
+
+  @media (max-width: 680px) {
+    padding: 3em 2em;
+    flex-direction: column;
+
+    nav {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
 }
 </style>

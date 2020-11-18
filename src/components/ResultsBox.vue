@@ -1,8 +1,10 @@
 <template>
   <div class="results-box">
-    <div v-for="result in results" :key="result" class="result">
-      {{ result }}
-    </div>
+    <transition-group name="fade" class="row">
+      <div v-for="result in results" :key="result" class="result">
+        {{ result }}
+      </div>
+    </transition-group>
   </div>
 </template>
 

@@ -10,7 +10,11 @@
       @focus="show = true"
     />
     <transition name="fade">
-      <ResultsBox v-if="results.length > 0 && show" :results="results" />
+      <ResultsBox
+        v-if="results.length > 0 && show"
+        :results="results"
+        @select-anime="selectAnime"
+      />
     </transition>
   </div>
 </template>
@@ -18,34 +22,74 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import ResultsBox from "@/components/ResultsBox.vue";
+import { IAnime } from "@/libs/interfaces/Anime";
 
 export default defineComponent({
   name: "Search",
   components: {
     ResultsBox
   },
-  setup() {
+  emits: ["select-anime"],
+  setup(props, { emit }) {
     let timeoutRef: null | number = null;
     const query = ref("");
-    const results = ref([] as Array<number>); // This is temporary for testing
+    const results = ref([] as Array<IAnime>);
     const show = ref(false);
 
-    const search = () => {
+    const graphqlQuery = `
+      query ($search: String, $id: Int) {
+        Page(page: 1, perPage: 10) {
+          media(search: $search, id: $id, type: ANIME) {
+            id
+            title {
+              romaji
+              english
+            }
+            description
+            coverImage {
+              extraLarge
+            }
+            bannerImage
+            siteUrl
+          }
+        }
+      }
+    `;
+
+    const search = async () => {
       if (timeoutRef !== null) {
         clearTimeout(timeoutRef);
       }
 
-      timeoutRef = setTimeout(() => {
+      timeoutRef = setTimeout(async () => {
         if (query.value === "") {
           results.value = [];
           return;
         }
-        if (results.value.length === 0) return results.value.push(0);
-        return results.value.push(results.value[results.value.length - 1] + 1);
+
+        const data = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: graphqlQuery,
+            variables: {
+              search: query.value
+            }
+          })
+        }).then(res => res.json());
+        results.value = data.data.Page.media;
       }, 400);
     };
 
-    return { query, results, show, search };
+    const selectAnime = (anime: IAnime) => {
+      emit("select-anime", anime);
+      query.value = anime.title.english || anime.title.romaji;
+    };
+
+    return { query, results, show, search, selectAnime };
   }
 });
 </script>
@@ -70,7 +114,7 @@ export default defineComponent({
 
   .results-box {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
   }
 }
 </style>

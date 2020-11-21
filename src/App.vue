@@ -51,7 +51,7 @@ body {
 html {
   font-family: "Berlin Sans FB Regular", sans-serif;
   font-size: 16px;
-  font-size: clamp(1.2rem, 1.3vw, 5rem);
+  font-size: clamp(1.15rem, 1.2vw, 5rem);
   line-height: 1.2rem;
 }
 
@@ -70,6 +70,13 @@ h6 {
   font-family: "Insaniburger with Cheese", sans-serif;
   color: #ffffff;
   letter-spacing: 0.1rem;
+}
+
+a {
+  cursor: pointer;
+  color: #fff240;
+  width: fit-content;
+  text-decoration: none;
 }
 
 main {

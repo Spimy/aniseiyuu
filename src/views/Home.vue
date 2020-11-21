@@ -6,7 +6,20 @@
       <Search @select-anime="setAnime($event, 1)" />
     </div>
     <div class="result-container">
-      <AnimeBox v-for="anime in animeList" :key="anime" :anime="anime" />
+      <transition name="bounceIn" mode="out-in">
+        <AnimeBox
+          v-if="animeList[0]"
+          :key="animeList[0]"
+          :anime="animeList[0]"
+        />
+      </transition>
+      <transition name="bounceIn" mode="out-in">
+        <AnimeBox
+          v-if="animeList[1]"
+          :key="animeList[1]"
+          :anime="animeList[1]"
+        />
+      </transition>
     </div>
   </main>
 </template>

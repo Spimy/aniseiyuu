@@ -6,7 +6,7 @@
       :style="{ backgroundImage: `url(${anime.bannerImage})` }"
     >
       <div class="overlay">
-        <h2>{{ anime.title.english }}</h2>
+        <h2>{{ anime.title.english || anime.title.romaji }}</h2>
         <p v-html="anime.description" />
         <a target="_blank" :href="anime.siteUrl">
           More Information
@@ -14,13 +14,10 @@
       </div>
     </div>
   </div>
-  <transition name="bounceIn">
-    <Modal v-if="opened" :anime="anime" />
-  </transition>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType } from "vue";
 import Poster from "@/components/Poster.vue";
 import { IAnime } from "@/libs/interfaces/Anime";
 
@@ -31,11 +28,6 @@ export default defineComponent({
   },
   props: {
     anime: Object as PropType<IAnime>
-  },
-  setup() {
-    const opened = ref(false);
-    const toggleModal = () => (opened.value = !opened.value);
-    return { opened, toggleModal };
   }
 });
 </script>

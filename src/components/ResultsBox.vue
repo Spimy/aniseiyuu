@@ -1,20 +1,29 @@
 <template>
   <div class="results-box">
-    <transition-group name="fade" class="row">
-      <div v-for="result in results" :key="result" class="result">
-        {{ result }}
-      </div>
-    </transition-group>
+    <div
+      v-for="result in results"
+      :key="result"
+      class="result"
+      @click="selectResult(result)"
+    >
+      {{ result.title.english || result.title.romaji }}
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
+import { IAnime } from "@/libs/interfaces/Anime";
 
 export default defineComponent({
   name: "ResultsBox",
   props: {
-    results: Array
+    results: Array as PropType<Array<IAnime>>
+  },
+  emits: ["select-anime"],
+  setup(props, { emit }) {
+    const selectResult = (result: IAnime) => emit("select-anime", result);
+    return { selectResult };
   }
 });
 </script>
@@ -27,6 +36,7 @@ export default defineComponent({
   overflow-y: auto;
 
   .result {
+    z-index: 999;
     cursor: pointer;
     padding: 0.5em 1em;
     width: 100%;

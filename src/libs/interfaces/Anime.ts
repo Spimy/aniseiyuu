@@ -3,7 +3,6 @@ export interface IAnime {
   title: {
     romaji: string;
     english: string;
-    native: string;
   };
   description: string;
   coverImage: {

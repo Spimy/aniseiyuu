@@ -82,6 +82,7 @@ export default defineComponent({
       p {
         color: #cccccc;
         overflow: hidden;
+        height: 100%;
       }
     }
   }

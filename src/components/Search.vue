@@ -10,6 +10,9 @@
       @focus="show = true"
     />
     <transition name="fade">
+      <Throbber v-if="loading" />
+    </transition>
+    <transition name="fade">
       <ResultsBox
         v-if="results.length > 0 && show"
         :results="results"
@@ -23,15 +26,19 @@
 import { defineComponent, ref } from "vue";
 import ResultsBox from "@/components/ResultsBox.vue";
 import { IAnime } from "@/libs/interfaces/Anime";
+import Throbber from "@/components/Throbber.vue";
 
 export default defineComponent({
   name: "Search",
   components: {
-    ResultsBox
+    ResultsBox,
+    Throbber
   },
   emits: ["select-anime"],
   setup(props, { emit }) {
     let timeoutRef: null | number = null;
+
+    const loading = ref(false);
     const query = ref("");
     const results = ref([] as Array<IAnime>);
     const show = ref(false);
@@ -67,6 +74,7 @@ export default defineComponent({
           return;
         }
 
+        loading.value = true;
         const data = await fetch("https://graphql.anilist.co", {
           method: "POST",
           headers: {
@@ -81,6 +89,7 @@ export default defineComponent({
           })
         }).then(res => res.json());
         results.value = data.data.Page.media;
+        loading.value = false;
       }, 400);
     };
 
@@ -89,7 +98,7 @@ export default defineComponent({
       query.value = anime.title.english || anime.title.romaji;
     };
 
-    return { query, results, show, search, selectAnime };
+    return { loading, query, results, show, search, selectAnime };
   }
 });
 </script>
@@ -97,6 +106,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 .search {
   position: relative;
+
+  .throbber {
+    position: absolute;
+    top: -2.2em;
+    right: 1em;
+  }
 
   input {
     font-size: 1em;

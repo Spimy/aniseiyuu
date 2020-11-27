@@ -27,6 +27,7 @@ import { defineComponent, ref } from "vue";
 import ResultsBox from "@/components/ResultsBox.vue";
 import { IAnime } from "@/libs/interfaces/Anime";
 import Throbber from "@/components/Throbber.vue";
+import { animeSearchQuery } from "../libs/queries/AnimeSearch";
 
 export default defineComponent({
   name: "Search",
@@ -42,26 +43,6 @@ export default defineComponent({
     const query = ref("");
     const results = ref([] as Array<IAnime>);
     const show = ref(false);
-
-    const graphqlQuery = `
-      query ($search: String, $id: Int) {
-        Page(page: 1, perPage: 10) {
-          media(search: $search, id: $id, type: ANIME) {
-            id
-            title {
-              romaji
-              english
-            }
-            description
-            coverImage {
-              extraLarge
-            }
-            bannerImage
-            siteUrl
-          }
-        }
-      }
-    `;
 
     const search = async () => {
       if (timeoutRef !== null) {
@@ -82,7 +63,7 @@ export default defineComponent({
             Accept: "application/json"
           },
           body: JSON.stringify({
-            query: graphqlQuery,
+            query: animeSearchQuery,
             variables: {
               search: query.value
             }

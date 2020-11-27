@@ -1,5 +1,7 @@
+import { ICharacterShort } from "./Character";
+
 export interface IAnime {
-  id: string;
+  id: number;
   title: {
     romaji: string;
     english: string;
@@ -10,4 +12,7 @@ export interface IAnime {
   };
   bannerImage: string;
   siteUrl: string;
+  characters: {
+    edges: Array<ICharacterShort>;
+  };
 }

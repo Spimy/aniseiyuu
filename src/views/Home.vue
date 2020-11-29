@@ -227,6 +227,10 @@ export default defineComponent({
   }
 }
 
+.comparison-box {
+  margin-bottom: 5em;
+}
+
 .throbber {
   width: 3em;
   height: 3em;

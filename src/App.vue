@@ -90,6 +90,12 @@ main {
   }
 }
 
+#app {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: 2.5em;
+}
+
 ::-webkit-scrollbar {
   width: 0.6em;
 }

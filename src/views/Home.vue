@@ -95,6 +95,7 @@ export default defineComponent({
       })
         .then(res => res.json().then(json => json.data.Staff))
         .catch(() =>
+          // I was lazy to handle this shhh
           alert("too many requests being sent, please try again later.")
         );
 

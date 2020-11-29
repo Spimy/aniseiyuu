@@ -144,10 +144,13 @@ export default defineComponent({
           gap: 0.5em;
           width: 100%;
           overflow: auto;
-          justify-content: center;
+
+          a {
+            margin: 0 auto;
+          }
 
           img {
-            @include imageBlock(11em, 8em);
+            @include imageBlock(11.45em, 8em);
           }
         }
 

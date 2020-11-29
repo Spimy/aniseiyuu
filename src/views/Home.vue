@@ -83,6 +83,10 @@ export default defineComponent({
       }
     };
 
+    const timeout = (ms: number) => {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    };
+
     const getVAData = async (
       vaId: number,
       animeIds: Array<number>,
@@ -90,7 +94,7 @@ export default defineComponent({
       foundCharacters: Array<IStaffCharacter> = [],
       foundAnime: Array<IAnimeNode> = []
     ): Promise<ISeiyuuFound> => {
-      const data: ISeiyuu = await fetch("https://graphql.anilist.co", {
+      const response = await fetch("https://graphql.anilist.co", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,17 +107,20 @@ export default defineComponent({
             page: page
           }
         })
-      })
-        .then(res => res.json().then(json => json.data.Staff))
-        .catch(() =>
-          // I was lazy to handle this shhh
-          alert("too many requests being sent, please try again later.")
-        );
+      });
+
+      const data: ISeiyuu = await response.json().then(json => json.data.Staff);
 
       for (const character of data.characters.nodes) {
         for (const anime of character.media.nodes) {
           if (animeIds.includes(anime.id)) {
-            foundCharacters.push(character);
+            if (
+              !foundCharacters.some(
+                found => found.name.full === character.name.full
+              )
+            ) {
+              foundCharacters.push(character);
+            }
             if (!foundAnime.some(found => found.id === anime.id)) {
               foundAnime.push({ ...anime, characters: [] });
             }
@@ -123,13 +130,13 @@ export default defineComponent({
       }
 
       if (data.characters.pageInfo.hasNextPage) {
-        return getVAData(
-          vaId,
-          animeIds,
-          data.characters.pageInfo.currentPage + 1,
-          foundCharacters,
-          foundAnime
-        );
+        if (response.status === 429) {
+          await timeout(5000);
+          page = data.characters.pageInfo.currentPage;
+        } else {
+          page = data.characters.pageInfo.currentPage + 1;
+        }
+        return getVAData(vaId, animeIds, page, foundCharacters, foundAnime);
       }
 
       for (const anime of foundAnime) {

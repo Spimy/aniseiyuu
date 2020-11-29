@@ -6,7 +6,11 @@
     <div class="comparison">
       <div v-for="seiyuu in seiyuuList" :key="seiyuu" class="container">
         <div class="seiyuu">
-          <img :src="seiyuu.image.large" :alt="`${seiyuu.name.full}'s image`" />
+          <img
+            :src="seiyuu.image.large"
+            :alt="`${seiyuu.name.full}'s image`"
+            loading="lazy"
+          />
           <div class="name">
             <a target="_blank" :href="seiyuu.siteUrl">
               {{ seiyuu.name.full }}
@@ -25,6 +29,7 @@
               <img
                 :src="character.image.large"
                 :alt="`${character.name.full}'s image`"
+                loading="lazy"
               />
             </a>
           </div>

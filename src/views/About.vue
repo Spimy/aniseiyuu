@@ -23,7 +23,7 @@
         without them providing the data needed. A big thank you to the AniList's
         API 😃.
       </p>
-      <img src="@/assets/img/anilist.jpg" alt="Anilist's API" />
+      <img src="@/assets/img/anilist.jpg" alt="Anilist's API" loading="lazy" />
     </div>
   </main>
 </template>

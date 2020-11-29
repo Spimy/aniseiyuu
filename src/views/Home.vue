@@ -32,6 +32,11 @@
         :key="matchingVAs"
         :seiyuuList="matchingVAs"
       />
+      <div style="text-align:center" v-else>
+        <transition name="fade">
+          <h3 v-if="!firstLoad && !loading">No match found.</h3>
+        </transition>
+      </div>
     </transition>
     <transition name="fade">
       <Throbber v-if="loading" />
@@ -65,6 +70,7 @@ export default defineComponent({
     const animeTwo = ref({} as IAnime);
     const matchingVAs = ref([] as Array<ISeiyuuFound>);
     const loading = ref(false);
+    const firstLoad = ref(true);
 
     const getVAData = async (
       vaId: number,
@@ -175,9 +181,10 @@ export default defineComponent({
 
       matchingVAs.value = vaData;
       loading.value = false;
+      firstLoad.value = false;
     };
 
-    return { animeOne, animeTwo, matchingVAs, compare, loading };
+    return { animeOne, animeTwo, matchingVAs, compare, loading, firstLoad };
   }
 });
 </script>

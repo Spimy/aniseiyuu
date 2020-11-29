@@ -1,32 +1,40 @@
 <template>
   <main>
     <div class="search-container">
-      <Search @select-anime="setAnime($event, 0)" />
+      <Search @select-anime="animeOne = $event" />
       <button @click="compare"><CompareArrow /><br />Seiyuu</button>
-      <Search @select-anime="setAnime($event, 1)" />
+      <Search @select-anime="animeTwo = $event" />
     </div>
     <div class="result-container">
       <transition name="bounceIn" mode="out-in">
         <AnimeBox
-          v-if="animeList[0]"
-          :key="animeList[0]"
-          :anime="animeList[0]"
+          v-if="Object.keys(animeOne).length > 0"
+          :key="animeOne"
+          :anime="animeOne"
         />
       </transition>
       <transition name="bounceIn" mode="out-in">
         <AnimeBox
-          v-if="animeList[1]"
-          :key="animeList[1]"
-          :anime="animeList[1]"
+          v-if="Object.keys(animeTwo).length > 0"
+          :key="animeTwo"
+          :anime="animeTwo"
         />
       </transition>
     </div>
     <transition name="bounceIn" mode="out-in">
       <ComparisonBox
-        v-if="animeList && animeList.length === 2 && matchingVAs.length > 0"
+        v-if="
+          Object.keys(animeOne).length > 0 &&
+            Object.keys(animeTwo).length > 0 &&
+            matchingVAs.length > 0 &&
+            !loading
+        "
         :key="matchingVAs"
         :seiyuuList="matchingVAs"
       />
+    </transition>
+    <transition name="fade">
+      <Throbber v-if="loading" />
     </transition>
   </main>
 </template>
@@ -37,10 +45,11 @@ import Search from "@/components/Search.vue";
 import AnimeBox from "@/components/AnimeBox.vue";
 import CompareArrow from "@/assets/icons/CompareArrow.vue";
 import ComparisonBox from "@/components/ComparisonBox.vue";
-import { IAnime } from "@/libs/interfaces/Anime";
-import { ICharacterMediaNode } from "@/libs/interfaces/CharacterMedia";
+import { IAnime, IAnimeNode } from "@/libs/interfaces/Anime";
 import { ISeiyuu, ISeiyuuFound, ISeiyuuShort } from "@/libs/interfaces/Seiyuu";
 import { staffQuery } from "../libs/queries/Staff";
+import { IStaffCharacter } from "@/libs/interfaces/Character";
+import Throbber from "@/components/Throbber.vue";
 
 export default defineComponent({
   name: "Home",
@@ -48,21 +57,21 @@ export default defineComponent({
     Search,
     CompareArrow,
     AnimeBox,
-    ComparisonBox
+    ComparisonBox,
+    Throbber
   },
   setup() {
-    const animeList = ref([] as Array<IAnime>);
+    const animeOne = ref({} as IAnime);
+    const animeTwo = ref({} as IAnime);
     const matchingVAs = ref([] as Array<ISeiyuuFound>);
-
-    const setAnime = (anime: IAnime, index: 0 | 1) => {
-      animeList.value[index] = anime;
-    };
+    const loading = ref(false);
 
     const getVAData = async (
       vaId: number,
       animeIds: Array<number>,
       page = 1,
-      foundNodes: Array<ICharacterMediaNode> = []
+      foundCharacters: Array<IStaffCharacter> = [],
+      foundAnime: Array<IAnimeNode> = []
     ): Promise<ISeiyuuFound> => {
       const data: ISeiyuu = await fetch("https://graphql.anilist.co", {
         method: "POST",
@@ -77,45 +86,63 @@ export default defineComponent({
             page: page
           }
         })
-      }).then(res => res.json().then(json => json.data.Staff));
+      })
+        .then(res => res.json().then(json => json.data.Staff))
+        .catch(() =>
+          alert("too many requests being sent, please try again later.")
+        );
 
-      for (const node of data.characterMedia.nodes) {
-        if (animeIds.includes(node.id)) {
-          foundNodes.push(node);
-          if (foundNodes.length === 2) break;
+      for (const character of data.characters.nodes) {
+        for (const anime of character.media.nodes) {
+          if (animeIds.includes(anime.id)) {
+            foundCharacters.push(character);
+            if (!foundAnime.some(found => found.id === anime.id)) {
+              foundAnime.push({ ...anime, characters: [] });
+            }
+            if (foundAnime.length === animeIds.length) break;
+          }
         }
       }
-      if (foundNodes.length < 2 && data.characterMedia.pageInfo.hasNextPage) {
+
+      if (
+        foundAnime.length < animeIds.length &&
+        data.characters.pageInfo.hasNextPage
+      ) {
         return getVAData(
           vaId,
           animeIds,
-          data.characterMedia.pageInfo.currentPage + 1,
-          foundNodes
+          data.characters.pageInfo.currentPage + 1,
+          foundCharacters,
+          foundAnime
         );
+      }
+
+      for (const anime of foundAnime) {
+        for (const character of foundCharacters) {
+          if (character.media.nodes.some(media => media.id === anime.id)) {
+            anime["characters"].push(character);
+          }
+        }
       }
 
       const seiyuu: ISeiyuuFound = {
         ...data,
-        characterMedia: foundNodes
+        characterMedia: foundAnime.reverse()
       };
 
       return seiyuu;
     };
 
     const compare = async () => {
-      console.log("started");
+      loading.value = true;
       if (
-        typeof animeList.value === "undefined" ||
-        animeList.value.length !== 2
-      ) {
+        Object.keys(animeOne.value).length === 0 &&
+        Object.keys(animeTwo.value).length === 0
+      )
         return;
-      }
 
-      const animeOne = animeList.value[0];
-      const animeTwo = animeList.value[1];
-
-      const charactersOne = animeOne.characters.edges;
-      const charactersTwo = animeTwo.characters.edges;
+      const charactersOne = animeOne.value.characters.edges;
+      const charactersTwo = animeTwo.value.characters.edges;
 
       const vaOne: Array<ISeiyuuShort[]> = [];
       const vaTwo: Array<ISeiyuuShort[]> = [];
@@ -136,14 +163,21 @@ export default defineComponent({
         });
       });
 
-      matchingVAs.value = await Promise.all(
-        matchingVAIds.map(
-          async va => await getVAData(va.id, [animeOne.id, animeTwo.id])
-        )
+      const vaData = await Promise.all(
+        matchingVAIds.map(async va => {
+          const idList =
+            animeOne.value.id == animeTwo.value.id
+              ? [animeOne.value.id]
+              : [animeOne.value.id, animeTwo.value.id];
+          return await getVAData(va.id, idList);
+        })
       );
+
+      matchingVAs.value = vaData;
+      loading.value = false;
     };
 
-    return { animeList, matchingVAs, setAnime, compare };
+    return { animeOne, animeTwo, matchingVAs, compare, loading };
   }
 });
 </script>
@@ -190,6 +224,15 @@ export default defineComponent({
 
   @media (max-width: 960px) {
     flex-direction: column;
+  }
+}
+
+.throbber {
+  width: 3em;
+  height: 3em;
+
+  &:after {
+    background-color: #1e1b29;
   }
 }
 </style>

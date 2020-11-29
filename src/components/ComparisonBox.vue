@@ -135,6 +135,10 @@ export default defineComponent({
         justify-content: space-around;
         overflow: hidden;
 
+        @media (max-width: 820px) {
+          gap: 1em;
+        }
+
         .characters {
           display: flex;
           gap: 0.5em;

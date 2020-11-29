@@ -1,4 +1,5 @@
-import { ICharacterMedia, ICharacterMediaNode } from "./CharacterMedia";
+import { ICharacters } from "./Character";
+import { IAnimeNode } from "./Anime";
 
 export interface ISeiyuuShort {
   id: number;
@@ -12,7 +13,7 @@ export interface ISeiyuu {
     large: string;
   };
   siteUrl: string;
-  characterMedia: ICharacterMedia;
+  characters: ICharacters;
 }
 
 export interface ISeiyuuFound {
@@ -23,5 +24,5 @@ export interface ISeiyuuFound {
     large: string;
   };
   siteUrl: string;
-  characterMedia: Array<ICharacterMediaNode>;
+  characterMedia: Array<IAnimeNode>;
 }

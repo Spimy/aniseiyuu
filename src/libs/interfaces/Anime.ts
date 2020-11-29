@@ -1,4 +1,4 @@
-import { ICharacterShort } from "./Character";
+import { ICharacterShort, ICharacter } from "./Character";
 
 export interface IAnime {
   id: number;
@@ -15,4 +15,13 @@ export interface IAnime {
   characters: {
     edges: Array<ICharacterShort>;
   };
+}
+
+export interface IAnimeNode {
+  id: number;
+  title: {
+    english: string;
+    romaji: string;
+  };
+  characters: Array<ICharacter>;
 }

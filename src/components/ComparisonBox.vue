@@ -146,6 +146,10 @@ export default defineComponent({
             @include imageBlock(11em, 8em);
           }
         }
+
+        h3 {
+          text-align: center;
+        }
       }
     }
   }

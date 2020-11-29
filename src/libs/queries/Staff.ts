@@ -8,26 +8,27 @@ export const staffQuery = `
         large
       }
       siteUrl
-      characterMedia(page: $page, perPage: 25) {
+      characters(page: $page, perPage: 25) {
         pageInfo {
           currentPage
           hasNextPage
         }
         nodes {
           id
-          title {
-            english
-            romaji
+          name {
+            full
           }
-          characters {
+          image {
+            large
+          }
+          siteUrl
+          media {
             nodes {
-              name {
-                full
+              id
+              title {
+                english
+                romaji
               }
-              image {
-                large
-              }
-              siteUrl
             }
           }
         }

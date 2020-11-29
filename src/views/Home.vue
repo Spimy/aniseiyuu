@@ -213,7 +213,6 @@ export default defineComponent({
     };
 
     onLoad();
-    console.log(animeOne.value);
     return { animeOne, animeTwo, matchingVAs, compare, loading, firstLoad };
   }
 });

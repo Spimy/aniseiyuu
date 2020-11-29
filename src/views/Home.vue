@@ -72,6 +72,17 @@ export default defineComponent({
     const loading = ref(false);
     const firstLoad = ref(true);
 
+    const checkLocalStorage = () => {
+      const test = "test";
+      try {
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    };
+
     const getVAData = async (
       vaId: number,
       animeIds: Array<number>,
@@ -183,8 +194,26 @@ export default defineComponent({
       matchingVAs.value = vaData;
       loading.value = false;
       firstLoad.value = false;
+
+      if (checkLocalStorage()) {
+        localStorage.setItem("animeOne", JSON.stringify(animeOne.value));
+        localStorage.setItem("animeTwo", JSON.stringify(animeTwo.value));
+        localStorage.setItem("matchingVAs", JSON.stringify(vaData));
+      }
     };
 
+    const onLoad = () => {
+      if (checkLocalStorage()) {
+        animeOne.value = JSON.parse(localStorage.getItem("animeOne") || "{}");
+        animeTwo.value = JSON.parse(localStorage.getItem("animeTwo") || "{}");
+        matchingVAs.value = JSON.parse(
+          localStorage.getItem("matchingVAs") || "{}"
+        );
+      }
+    };
+
+    onLoad();
+    console.log(animeOne.value);
     return { animeOne, animeTwo, matchingVAs, compare, loading, firstLoad };
   }
 });

@@ -98,7 +98,7 @@ export default defineComponent({
           @include imageBlock(11em, 15em);
 
           @media (max-width: 820px) {
-            @include imageBlock(3em);
+            @include imageBlock(3em, 3.2em);
           }
         }
 

@@ -16,11 +16,11 @@ export default defineComponent({
 footer {
   text-align: center;
   padding: 0.5em;
-  position: fixed;
+  background-color: var(--faded-purple);
+  position: absolute;
   bottom: 0;
   left: 7em;
   right: 7em;
-  background-color: var(--faded-purple);
 
   @media (max-width: 680px) {
     left: 2em;

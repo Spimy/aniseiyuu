@@ -122,10 +122,7 @@ export default defineComponent({
         }
       }
 
-      if (
-        foundAnime.length < animeIds.length &&
-        data.characters.pageInfo.hasNextPage
-      ) {
+      if (data.characters.pageInfo.hasNextPage) {
         return getVAData(
           vaId,
           animeIds,

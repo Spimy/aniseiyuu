@@ -16,7 +16,7 @@
         <div v-for="anime in seiyuu.characterMedia" :key="anime" class="anime">
           <div class="characters">
             <a
-              v-for="character in anime.characters.nodes"
+              v-for="character in anime.characters"
               :key="character"
               :title="character.name.full"
               :href="character.siteUrl"
@@ -30,21 +30,6 @@
           </div>
           <h3>{{ anime.title.english || anime.title.romaji }}</h3>
         </div>
-        <!-- <div class="anime">
-          <div class="characters">
-            <a
-              title="Yuna"
-              target="_blank"
-              href="https://anilist.co/character/156323/Yuna"
-            >
-              <img
-                src="https://s4.anilist.co/file/anilistcdn/character/large/b156323-XFpj7BvipSCm.png"
-                alt="temp"
-              />
-            </a>
-          </div>
-          <h3>Kuma Kuma Kuma Bear</h3>
-        </div> -->
       </div>
     </div>
   </div>
@@ -58,10 +43,6 @@ export default defineComponent({
   name: "ComparisonBox",
   props: {
     seiyuuList: Object as PropType<Array<ISeiyuuFound>>
-  },
-  setup(props) {
-    console.log(props.seiyuuList);
-    return {};
   }
 });
 </script>
@@ -157,7 +138,7 @@ export default defineComponent({
           justify-content: center;
 
           img {
-            @include imageBlock(12em, 8em);
+            @include imageBlock(11em, 8em);
           }
         }
       }

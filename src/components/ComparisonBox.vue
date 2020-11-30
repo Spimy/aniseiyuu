@@ -6,11 +6,7 @@
     <div class="comparison">
       <div v-for="seiyuu in seiyuuList" :key="seiyuu" class="container">
         <div class="seiyuu">
-          <img
-            :src="seiyuu.image.large"
-            :alt="`${seiyuu.name.full}'s image`"
-            loading="lazy"
-          />
+          <Poster :imageLink="seiyuu.image.large" :imageAlt="`${seiyuu.name.full}'s image`" />
           <div class="name">
             <a target="_blank" :href="seiyuu.siteUrl">
               {{ seiyuu.name.full }}
@@ -26,11 +22,7 @@
               :href="character.siteUrl"
               target="_blank"
             >
-              <img
-                :src="character.image.large"
-                :alt="`${character.name.full}'s image`"
-                loading="lazy"
-              />
+              <Poster :imageLink="character.image.large" :imageAlt="`${character.name.full}'s image`" />
             </a>
           </div>
           <h3>{{ anime.title.english || anime.title.romaji }}</h3>
@@ -43,12 +35,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { ISeiyuuFound } from "@/libs/interfaces/Seiyuu";
+import Poster from "@/components/Poster.vue";
 
 export default defineComponent({
   name: "ComparisonBox",
   props: {
     seiyuuList: Object as PropType<Array<ISeiyuuFound>>
-  }
+  },
+  components: { Poster }
 });
 </script>
 
@@ -107,6 +101,17 @@ export default defineComponent({
           }
         }
 
+        .noImage {
+          background-color: var(--btn-color);
+          width: 11em;
+          height: 15em;
+
+          @media (max-width: 820px) {
+            width: 3em;
+            height: 3.2em;
+          }
+        }
+
         .name {
           position: absolute;
           bottom: 0;
@@ -149,8 +154,10 @@ export default defineComponent({
             margin: 0 auto;
           }
 
-          img {
-            @include imageBlock(11.45em, 8em);
+          .poster,
+          .noImage {
+            width: 11.45em;
+            height: 8em;
           }
         }
 

@@ -19,27 +19,11 @@ export default defineComponent({
   height: 1.2em;
   border-radius: 50%;
   background: #ffffff;
-  background: -moz-linear-gradient(
-    left,
-    #ffffff 10%,
-    rgba(255, 255, 255, 0) 42%
-  );
-  background: -webkit-linear-gradient(
-    left,
-    #ffffff 10%,
-    rgba(255, 255, 255, 0) 42%
-  );
+  background: -moz-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: -webkit-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
   background: -o-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
-  background: -ms-linear-gradient(
-    left,
-    #ffffff 10%,
-    rgba(255, 255, 255, 0) 42%
-  );
-  background: linear-gradient(
-    to right,
-    #ffffff 10%,
-    rgba(255, 255, 255, 0) 42%
-  );
+  background: -ms-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: linear-gradient(to right, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
   position: relative;
   -webkit-animation: load3 1.4s infinite linear;
   animation: load3 1.4s infinite linear;

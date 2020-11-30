@@ -1,10 +1,7 @@
 <template>
   <div class="anime-box">
     <Poster :imageLink="anime.coverImage.extraLarge" />
-    <div
-      class="anime-info"
-      :style="{ backgroundImage: `url(${anime.bannerImage})` }"
-    >
+    <div class="anime-info" :style="{ backgroundImage: `url(${anime.bannerImage})` }">
       <div class="overlay">
         <h2>{{ anime.title.english || anime.title.romaji }}</h2>
         <p v-html="anime.description" />

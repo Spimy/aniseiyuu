@@ -1,11 +1,6 @@
 <template>
   <div class="results-box">
-    <div
-      v-for="result in results"
-      :key="result"
-      class="result"
-      @click="selectResult(result)"
-    >
+    <div v-for="result in results" :key="result" class="result" @click="selectResult(result)">
       {{ result.title.english || result.title.romaji }}
     </div>
   </div>

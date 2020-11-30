@@ -7,27 +7,16 @@
     </div>
     <div class="result-container">
       <transition name="bounceIn" mode="out-in">
-        <AnimeBox
-          v-if="Object.keys(animeOne).length > 0"
-          :key="animeOne"
-          :anime="animeOne"
-        />
+        <AnimeBox v-if="Object.keys(animeOne).length > 0" :key="animeOne" :anime="animeOne" />
       </transition>
       <transition name="bounceIn" mode="out-in">
-        <AnimeBox
-          v-if="Object.keys(animeTwo).length > 0"
-          :key="animeTwo"
-          :anime="animeTwo"
-        />
+        <AnimeBox v-if="Object.keys(animeTwo).length > 0" :key="animeTwo" :anime="animeTwo" />
       </transition>
     </div>
     <transition name="bounceIn" mode="out-in">
       <ComparisonBox
         v-if="
-          Object.keys(animeOne).length > 0 &&
-            Object.keys(animeTwo).length > 0 &&
-            matchingVAs.length > 0 &&
-            !loading
+          Object.keys(animeOne).length > 0 && Object.keys(animeTwo).length > 0 && matchingVAs.length > 0 && !loading
         "
         :key="matchingVAs"
         :seiyuuList="matchingVAs"
@@ -114,11 +103,7 @@ export default defineComponent({
       for (const character of data.characters.nodes) {
         for (const anime of character.media.nodes) {
           if (animeIds.includes(anime.id)) {
-            if (
-              !foundCharacters.some(
-                found => found.name.full === character.name.full
-              )
-            ) {
+            if (!foundCharacters.some(found => found.name.full === character.name.full)) {
               foundCharacters.push(character);
             }
             if (!foundAnime.some(found => found.id === anime.id)) {
@@ -157,11 +142,7 @@ export default defineComponent({
 
     const compare = async () => {
       loading.value = true;
-      if (
-        Object.keys(animeOne.value).length === 0 &&
-        Object.keys(animeTwo.value).length === 0
-      )
-        return;
+      if (Object.keys(animeOne.value).length === 0 && Object.keys(animeTwo.value).length === 0) return;
 
       const charactersOne = animeOne.value.characters.edges;
       const charactersTwo = animeTwo.value.characters.edges;
@@ -175,9 +156,7 @@ export default defineComponent({
       const matchingVAIds: Array<ISeiyuuShort> = [];
       vaOne.forEach(va1 => {
         vaTwo.forEach(va2 => {
-          const match = va1.filter(va11 =>
-            va2.some(va22 => va11.id === va22.id)
-          );
+          const match = va1.filter(va11 => va2.some(va22 => va11.id === va22.id));
           if (match.length > 0) {
             const found = matchingVAIds.some(va => va.id === match[0].id);
             if (!found) matchingVAIds.push(match[0]);
@@ -188,9 +167,7 @@ export default defineComponent({
       const vaData = await Promise.all(
         matchingVAIds.map(async va => {
           const idList =
-            animeOne.value.id == animeTwo.value.id
-              ? [animeOne.value.id]
-              : [animeOne.value.id, animeTwo.value.id];
+            animeOne.value.id == animeTwo.value.id ? [animeOne.value.id] : [animeOne.value.id, animeTwo.value.id];
           return await getVAData(va.id, idList);
         })
       );
@@ -210,9 +187,7 @@ export default defineComponent({
       if (checkLocalStorage()) {
         animeOne.value = JSON.parse(localStorage.getItem("animeOne") || "{}");
         animeTwo.value = JSON.parse(localStorage.getItem("animeTwo") || "{}");
-        matchingVAs.value = JSON.parse(
-          localStorage.getItem("matchingVAs") || "{}"
-        );
+        matchingVAs.value = JSON.parse(localStorage.getItem("matchingVAs") || "{}");
       }
     };
 

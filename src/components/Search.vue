@@ -13,11 +13,7 @@
       <Throbber v-if="loading" />
     </transition>
     <transition name="fade">
-      <ResultsBox
-        v-if="results.length > 0 && show"
-        :results="results"
-        @select-anime="selectAnime"
-      />
+      <ResultsBox v-if="results.length > 0 && show" :results="results" @select-anime="selectAnime" />
     </transition>
   </div>
 </template>

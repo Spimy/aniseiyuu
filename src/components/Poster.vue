@@ -1,22 +1,22 @@
 <template>
-  <img
-    class="poster"
-    v-if="imageLink"
-    :src="imageLink"
-    alt="Poster"
-    loading="lazy"
-  />
+  <img class="poster" v-if="imageLink" :src="imageLink" :alt="imageAlt || 'Poster'" loading="lazy" />
   <!-- Will use an icon when I finally design one -->
-  <div class="noImage" v-else>AniSeiyuu</div>
+  <div class="noImage" v-else>
+    <Logo />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import Logo from "@/assets/icons/Logo.vue";
+
 export default defineComponent({
   name: "Poster",
   props: {
-    imageLink: String
-  }
+    imageLink: String,
+    imageAlt: String
+  },
+  components: { Logo }
 });
 </script>
 
@@ -35,5 +35,6 @@ img.poster,
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
 }
 </style>

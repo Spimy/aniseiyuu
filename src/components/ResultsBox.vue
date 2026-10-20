@@ -1,14 +1,14 @@
 <template>
   <div class="results-box">
-    <div v-for="result in results" :key="result" class="result" @click="selectResult(result)">
+    <div v-for="result in results" :key="result.id" class="result" @click="selectResult(result)">
       {{ result.title.english || result.title.romaji }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
 import { IAnime } from "@/libs/interfaces/Anime";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "ResultsBox",

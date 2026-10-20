@@ -5,6 +5,7 @@ export const animeSearchQuery = `
         id
         title {
           romaji
+          english
         }
         description
         coverImage {
@@ -12,16 +13,6 @@ export const animeSearchQuery = `
         }
         bannerImage
         siteUrl
-        characters {
-          edges {
-            node {
-              id
-            }
-            voiceActors {
-              id
-            }
-          }
-        }
       }
     }
   }

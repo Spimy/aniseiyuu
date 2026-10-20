@@ -19,10 +19,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
 import ResultsBox from "@/components/ResultsBox.vue";
-import { IAnime } from "@/libs/interfaces/Anime";
 import Throbber from "@/components/Throbber.vue";
+import { anilist } from "@/libs/anilist";
+import { IAnime } from "@/libs/interfaces/Anime";
+import { defineComponent, ref } from "vue";
 import { animeSearchQuery } from "../libs/queries/AnimeSearch";
 
 export default defineComponent({
@@ -40,34 +41,30 @@ export default defineComponent({
     const results = ref([] as Array<IAnime>);
     const show = ref(false);
 
-    const search = async () => {
-      if (timeoutRef !== null) {
-        clearTimeout(timeoutRef);
-      }
+    let latest = 0;
+
+    const search = () => {
+      if (timeoutRef !== null) clearTimeout(timeoutRef);
 
       timeoutRef = setTimeout(async () => {
-        if (query.value === "") {
+        const term = query.value.trim();
+        if (term.length < 2) {
           results.value = [];
           return;
         }
 
+        const requestId = ++latest;
         loading.value = true;
-        const data = await fetch("https://graphql.anilist.co", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-          },
-          body: JSON.stringify({
-            query: animeSearchQuery,
-            variables: {
-              search: query.value
-            }
-          })
-        }).then(res => res.json());
-        results.value = data.data.Page.media;
-        loading.value = false;
-      }, 400);
+        try {
+          const data = await anilist<{ Page: { media: Array<IAnime> } }>(animeSearchQuery, { search: term });
+          if (requestId === latest) results.value = data.Page.media;
+        } catch (e) {
+          if (requestId === latest) results.value = [];
+          console.error(e);
+        } finally {
+          if (requestId === latest) loading.value = false;
+        }
+      }, 500);
     };
 
     const selectAnime = (anime: IAnime) => {

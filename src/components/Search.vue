@@ -34,7 +34,7 @@ export default defineComponent({
   },
   emits: ["select-anime"],
   setup(props, { emit }) {
-    let timeoutRef: null | number = null;
+    let timeoutRef: ReturnType<typeof setTimeout> | null = null;
 
     const loading = ref(false);
     const query = ref("");
@@ -70,6 +70,7 @@ export default defineComponent({
     const selectAnime = (anime: IAnime) => {
       emit("select-anime", anime);
       query.value = anime.title.english || anime.title.romaji;
+      show.value = false;
     };
 
     return { loading, query, results, show, search, selectAnime };

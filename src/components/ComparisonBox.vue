@@ -40,7 +40,7 @@ import { defineComponent, PropType } from "vue";
 export default defineComponent({
   name: "ComparisonBox",
   props: {
-    seiyuuList: Object as PropType<Array<ISeiyuuFound>>
+    seiyuuList: { type: Array as PropType<Array<ISeiyuuFound>>, required: true }
   },
   components: { Poster }
 });

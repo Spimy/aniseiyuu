@@ -5,18 +5,16 @@
       <div class="overlay">
         <h2>{{ anime.title.english || anime.title.romaji }}</h2>
         <p v-html="anime.description" />
-        <a target="_blank" :href="anime.siteUrl">
-          More Information
-        </a>
+        <a target="_blank" :href="anime.siteUrl"> More Information </a>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
 import Poster from "@/components/Poster.vue";
 import { IAnime } from "@/libs/interfaces/Anime";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "AnimeBox",
@@ -24,7 +22,10 @@ export default defineComponent({
     Poster
   },
   props: {
-    anime: Object as PropType<IAnime>
+    anime: {
+      type: Object as PropType<IAnime>,
+      required: true
+    }
   }
 });
 </script>

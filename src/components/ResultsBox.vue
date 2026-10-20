@@ -13,7 +13,7 @@ import { defineComponent, PropType } from "vue";
 export default defineComponent({
   name: "ResultsBox",
   props: {
-    results: Array as PropType<Array<IAnime>>
+    results: { type: Array as PropType<Array<IAnime>>, required: true }
   },
   emits: ["select-anime"],
   setup(props, { emit }) {

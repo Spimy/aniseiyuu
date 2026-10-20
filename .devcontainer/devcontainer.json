@@ -1,0 +1,11 @@
+{
+  "name": "aniseiyuu",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:16",
+  "forwardPorts": [8080],
+  "postCreateCommand": "yarn install",
+  "customizations": {
+    "vscode": {
+      "extensions": ["Vue.volar", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}

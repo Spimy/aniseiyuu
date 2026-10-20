@@ -21,7 +21,7 @@ export default defineComponent({
   font-weight: normal;
   font-display: swap;
   src: local("Insaniburger with Cheese"),
-    url("assets/fonts/Insanibc.woff2") format("woff2");
+    url("./assets/fonts/Insanibc.woff2") format("woff2");
 }
 
 @font-face {
@@ -30,7 +30,7 @@ export default defineComponent({
   font-weight: normal;
   font-display: swap;
   src: local("Berlin Sans FB"),
-    url("assets/fonts/Berlin Sans FB Regular.woff2") format("woff2");
+    url("./assets/fonts/Berlin Sans FB Regular.woff2") format("woff2");
 }
 
 * {

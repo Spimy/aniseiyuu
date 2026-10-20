@@ -4,7 +4,7 @@
       <h3 id="comparison">Comparison</h3>
     </div>
     <div class="comparison">
-      <div v-for="seiyuu in seiyuuList" :key="seiyuu" class="container">
+      <div v-for="seiyuu in seiyuuList" :key="seiyuu.siteUrl" class="container">
         <div class="seiyuu">
           <Poster :imageLink="seiyuu.image.large" :imageAlt="`${seiyuu.name.full}'s image`" />
           <div class="name">
@@ -13,11 +13,11 @@
             </a>
           </div>
         </div>
-        <div v-for="anime in seiyuu.characterMedia" :key="anime" class="anime">
+        <div v-for="anime in seiyuu.characterMedia" :key="anime.id" class="anime">
           <div class="characters">
             <a
               v-for="character in anime.characters"
-              :key="character"
+              :key="character.siteUrl"
               :title="character.name.full"
               :href="character.siteUrl"
               target="_blank"
@@ -33,9 +33,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { ISeiyuuFound } from "@/libs/interfaces/Seiyuu";
 import Poster from "@/components/Poster.vue";
+import { ISeiyuuFound } from "@/libs/interfaces/Seiyuu";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "ComparisonBox",

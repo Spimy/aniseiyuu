@@ -7,10 +7,10 @@
     </div>
     <div class="result-container">
       <transition name="bounceIn" mode="out-in">
-        <AnimeBox v-if="Object.keys(animeOne).length > 0" :key="animeOne" :anime="animeOne" />
+        <AnimeBox v-if="Object.keys(animeOne).length > 0" :key="animeOne.id" :anime="animeOne" />
       </transition>
       <transition name="bounceIn" mode="out-in">
-        <AnimeBox v-if="Object.keys(animeTwo).length > 0" :key="animeTwo" :anime="animeTwo" />
+        <AnimeBox v-if="Object.keys(animeTwo).length > 0" :key="animeTwo.id" :anime="animeTwo" />
       </transition>
     </div>
     <transition name="bounceIn" mode="out-in">
@@ -18,12 +18,13 @@
         v-if="
           Object.keys(animeOne).length > 0 && Object.keys(animeTwo).length > 0 && matchingVAs.length > 0 && !loading
         "
-        :key="matchingVAs"
+        :key="matchingVAs.map(va => va.siteUrl).join()"
         :seiyuuList="matchingVAs"
       />
       <div style="text-align:center" v-else>
         <transition name="fade">
-          <h3 v-if="!firstLoad && !loading">No match found.</h3>
+          <h3 v-if="error">{{ error }}</h3>
+          <h3 v-else-if="!firstLoad && !loading">No match found.</h3>
         </transition>
       </div>
     </transition>
@@ -34,16 +35,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import Search from "@/components/Search.vue";
-import AnimeBox from "@/components/AnimeBox.vue";
 import CompareArrow from "@/assets/icons/CompareArrow.vue";
+import AnimeBox from "@/components/AnimeBox.vue";
 import ComparisonBox from "@/components/ComparisonBox.vue";
-import { IAnime, IAnimeNode } from "@/libs/interfaces/Anime";
-import { ISeiyuu, ISeiyuuFound, ISeiyuuShort } from "@/libs/interfaces/Seiyuu";
-import { staffQuery } from "../libs/queries/Staff";
-import { IStaffCharacter } from "@/libs/interfaces/Character";
+import Search from "@/components/Search.vue";
 import Throbber from "@/components/Throbber.vue";
+import { getAnimeCharacters, ICharacterEdge, IVoiceActor } from "@/libs/anilist";
+import { IAnime, IAnimeNode } from "@/libs/interfaces/Anime";
+import { ICharacter } from "@/libs/interfaces/Character";
+import { ISeiyuuFound } from "@/libs/interfaces/Seiyuu";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "Home",
@@ -60,6 +61,7 @@ export default defineComponent({
     const matchingVAs = ref([] as Array<ISeiyuuFound>);
     const loading = ref(false);
     const firstLoad = ref(true);
+    const error = ref("");
 
     const checkLocalStorage = () => {
       const test = "test";
@@ -72,114 +74,66 @@ export default defineComponent({
       }
     };
 
-    const timeout = (ms: number) => {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    type VAEntry = { va: IVoiceActor; chars: Array<ICharacter> };
+
+    const groupByVA = (edges: Array<ICharacterEdge>) => {
+      const map = new Map<number, VAEntry>();
+      for (const edge of edges) {
+        for (const va of edge.voiceActors) {
+          const entry = map.get(va.id) || { va, chars: [] };
+          entry.chars.push(edge.node);
+          map.set(va.id, entry);
+        }
+      }
+      return map;
     };
 
-    const getVAData = async (
-      vaId: number,
-      animeIds: Array<number>,
-      page = 1,
-      foundCharacters: Array<IStaffCharacter> = [],
-      foundAnime: Array<IAnimeNode> = []
-    ): Promise<ISeiyuuFound> => {
-      const response = await fetch("https://graphql.anilist.co", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify({
-          query: staffQuery,
-          variables: {
-            id: vaId,
-            page: page
-          }
-        })
-      });
-
-      const data: ISeiyuu = await response.json().then(json => json.data.Staff);
-
-      for (const character of data.characters.nodes) {
-        for (const anime of character.media.nodes) {
-          if (animeIds.includes(anime.id)) {
-            if (!foundCharacters.some(found => found.name.full === character.name.full)) {
-              foundCharacters.push(character);
-            }
-            if (!foundAnime.some(found => found.id === anime.id)) {
-              foundAnime.push({ ...anime, characters: [] });
-            }
-            if (foundAnime.length === animeIds.length) break;
-          }
-        }
-      }
-
-      if (data.characters.pageInfo.hasNextPage) {
-        if (response.status === 429) {
-          await timeout(5000);
-          page = data.characters.pageInfo.currentPage;
-        } else {
-          page = data.characters.pageInfo.currentPage + 1;
-        }
-        return getVAData(vaId, animeIds, page, foundCharacters, foundAnime);
-      }
-
-      for (const anime of foundAnime) {
-        for (const character of foundCharacters) {
-          if (character.media.nodes.some(media => media.id === anime.id)) {
-            anime["characters"].push(character);
-          }
-        }
-      }
-
-      const seiyuu: ISeiyuuFound = {
-        ...data,
-        characterMedia: foundAnime.reverse()
-      };
-
-      return seiyuu;
-    };
+    const nodeFor = (anime: IAnime, characters: Array<ICharacter>): IAnimeNode => ({
+      id: anime.id,
+      title: anime.title,
+      characters
+    });
 
     const compare = async () => {
+      if (!animeOne.value.id || !animeTwo.value.id) return;
+
       loading.value = true;
-      if (Object.keys(animeOne.value).length === 0 && Object.keys(animeTwo.value).length === 0) return;
+      error.value = "";
+      try {
+        const sameAnime = animeOne.value.id === animeTwo.value.id;
+        const edgesOne = await getAnimeCharacters(animeOne.value.id);
+        const edgesTwo = sameAnime ? edgesOne : await getAnimeCharacters(animeTwo.value.id);
 
-      const charactersOne = animeOne.value.characters.edges;
-      const charactersTwo = animeTwo.value.characters.edges;
+        const mapOne = groupByVA(edgesOne);
+        const mapTwo = groupByVA(edgesTwo);
 
-      const vaOne: Array<ISeiyuuShort[]> = [];
-      const vaTwo: Array<ISeiyuuShort[]> = [];
-
-      charactersOne.forEach(character => vaOne.push(character.voiceActors));
-      charactersTwo.forEach(character => vaTwo.push(character.voiceActors));
-
-      const matchingVAIds: Array<ISeiyuuShort> = [];
-      vaOne.forEach(va1 => {
-        vaTwo.forEach(va2 => {
-          const match = va1.filter(va11 => va2.some(va22 => va11.id === va22.id));
-          if (match.length > 0) {
-            const found = matchingVAIds.some(va => va.id === match[0].id);
-            if (!found) matchingVAIds.push(match[0]);
-          }
+        const found: Array<ISeiyuuFound> = [];
+        mapOne.forEach((one, id) => {
+          const two = mapTwo.get(id);
+          if (!two) return;
+          found.push({
+            name: one.va.name,
+            image: one.va.image,
+            siteUrl: one.va.siteUrl,
+            characterMedia: sameAnime
+              ? [nodeFor(animeOne.value, one.chars)]
+              : [nodeFor(animeOne.value, one.chars), nodeFor(animeTwo.value, two.chars)]
+          });
         });
-      });
 
-      const vaData = await Promise.all(
-        matchingVAIds.map(async va => {
-          const idList =
-            animeOne.value.id == animeTwo.value.id ? [animeOne.value.id] : [animeOne.value.id, animeTwo.value.id];
-          return await getVAData(va.id, idList);
-        })
-      );
+        matchingVAs.value = found;
+        firstLoad.value = false;
 
-      matchingVAs.value = vaData;
-      loading.value = false;
-      firstLoad.value = false;
-
-      if (checkLocalStorage()) {
-        localStorage.setItem("animeOne", JSON.stringify(animeOne.value));
-        localStorage.setItem("animeTwo", JSON.stringify(animeTwo.value));
-        localStorage.setItem("matchingVAs", JSON.stringify(vaData));
+        if (checkLocalStorage()) {
+          localStorage.setItem("animeOne", JSON.stringify(animeOne.value));
+          localStorage.setItem("animeTwo", JSON.stringify(animeTwo.value));
+          localStorage.setItem("matchingVAs", JSON.stringify(found));
+        }
+      } catch (e) {
+        console.error(e);
+        error.value = e instanceof Error ? e.message : "Something went wrong talking to AniList.";
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -192,7 +146,7 @@ export default defineComponent({
     };
 
     onLoad();
-    return { animeOne, animeTwo, matchingVAs, compare, loading, firstLoad };
+    return { animeOne, animeTwo, matchingVAs, compare, loading, firstLoad, error };
   }
 });
 </script>

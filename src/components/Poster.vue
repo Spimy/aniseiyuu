@@ -1,23 +1,18 @@
 <template>
-  <img class="poster" v-if="imageLink" :src="imageLink" :alt="imageAlt || 'Poster'" loading="lazy" />
+  <img v-if="imageLink" class="poster" :src="imageLink" :alt="imageAlt" loading="lazy" />
   <!-- Will use an icon when I finally design one -->
-  <div class="noImage" v-else>
+  <div v-else class="noImage">
     <Logo />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import Logo from "@/assets/icons/Logo.vue";
 
-export default defineComponent({
-  name: "Poster",
-  props: {
-    imageLink: String,
-    imageAlt: String
-  },
-  components: { Logo }
-});
+const { imageLink, imageAlt = "Poster" } = defineProps<{
+  imageLink: string;
+  imageAlt?: string;
+}>();
 </script>
 
 <style lang="scss" scoped>

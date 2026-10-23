@@ -1,10 +1,10 @@
 <template>
   <div class="search">
     <input
+      v-model="query"
       type="text"
       placeholder="Enter Anime Title..."
       aria-label="Enter Anime Title..."
-      v-model="query"
       @keyup="search"
       @blur="show = false"
       @focus="show = true"
@@ -18,63 +18,60 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import ResultsBox from "@/components/ResultsBox.vue";
 import Throbber from "@/components/Throbber.vue";
 import { anilist } from "@/libs/anilist";
-import { IAnime } from "@/libs/interfaces/Anime";
-import { defineComponent, ref } from "vue";
-import { animeSearchQuery } from "../libs/queries/AnimeSearch";
+import type { IAnime } from "@/libs/interfaces/Anime";
+import { animeSearchQuery } from "@/libs/queries/AnimeSearch";
+import { onBeforeUnmount, ref } from "vue";
 
-export default defineComponent({
-  name: "Search",
-  components: {
-    ResultsBox,
-    Throbber
-  },
-  emits: ["select-anime"],
-  setup(props, { emit }) {
-    let timeoutRef: ReturnType<typeof setTimeout> | null = null;
+const emit = defineEmits<{
+  "select-anime": [anime: IAnime];
+}>();
 
-    const loading = ref(false);
-    const query = ref("");
-    const results = ref([] as Array<IAnime>);
-    const show = ref(false);
+const loading = ref(false);
+const query = ref("");
+const results = ref<Array<IAnime>>([]);
+const show = ref(false);
 
-    let latest = 0;
+let timeoutRef: ReturnType<typeof setTimeout> | null = null;
+let latest = 0;
 
-    const search = () => {
-      if (timeoutRef !== null) clearTimeout(timeoutRef);
+const search = () => {
+  if (timeoutRef !== null) clearTimeout(timeoutRef);
 
-      timeoutRef = setTimeout(async () => {
-        const term = query.value.trim();
-        if (term.length < 2) {
-          results.value = [];
-          return;
-        }
+  timeoutRef = setTimeout(async () => {
+    const term = query.value.trim();
+    if (term.length < 2) {
+      latest++;
+      results.value = [];
+      loading.value = false;
+      return;
+    }
 
-        const requestId = ++latest;
-        loading.value = true;
-        try {
-          const data = await anilist<{ Page: { media: Array<IAnime> } }>(animeSearchQuery, { search: term });
-          if (requestId === latest) results.value = data.Page.media;
-        } catch (e) {
-          if (requestId === latest) results.value = [];
-          console.error(e);
-        } finally {
-          if (requestId === latest) loading.value = false;
-        }
-      }, 500);
-    };
+    const requestId = ++latest;
+    loading.value = true;
+    try {
+      const data = await anilist<{ Page: { media: Array<IAnime> } }>(animeSearchQuery, { search: term });
+      if (requestId === latest) results.value = data.Page.media;
+    } catch (e) {
+      if (requestId === latest) results.value = [];
+      console.error(e);
+    } finally {
+      if (requestId === latest) loading.value = false;
+    }
+  }, 500);
+};
 
-    const selectAnime = (anime: IAnime) => {
-      emit("select-anime", anime);
-      query.value = anime.title.english || anime.title.romaji;
-      show.value = false;
-    };
+const selectAnime = (anime: IAnime) => {
+  emit("select-anime", anime);
+  query.value = anime.title.english || anime.title.romaji;
+  show.value = false;
+};
 
-    return { loading, query, results, show, search, selectAnime };
-  }
+onBeforeUnmount(() => {
+  if (timeoutRef !== null) clearTimeout(timeoutRef);
 });
 </script>
 

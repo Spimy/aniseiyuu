@@ -6,7 +6,7 @@
     <div class="comparison">
       <div v-for="seiyuu in seiyuuList" :key="seiyuu.siteUrl" class="container">
         <div class="seiyuu">
-          <Poster :imageLink="seiyuu.image.large" :imageAlt="`${seiyuu.name.full}'s image`" />
+          <Poster :image-link="seiyuu.image.large" :image-alt="`${seiyuu.name.full}'s image`" />
           <div class="name">
             <a target="_blank" :href="seiyuu.siteUrl">
               {{ seiyuu.name.full }}
@@ -22,7 +22,7 @@
               :href="character.siteUrl"
               target="_blank"
             >
-              <Poster :imageLink="character.image.large" :imageAlt="`${character.name.full}'s image`" />
+              <Poster :image-link="character.image.large" :image-alt="`${character.name.full}'s image`" />
             </a>
           </div>
           <h3>{{ anime.title.english || anime.title.romaji }}</h3>
@@ -32,18 +32,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import Poster from "@/components/Poster.vue";
 import { ISeiyuuFound } from "@/libs/interfaces/Seiyuu";
-import { defineComponent, PropType } from "vue";
 
-export default defineComponent({
-  name: "ComparisonBox",
-  props: {
-    seiyuuList: { type: Array as PropType<Array<ISeiyuuFound>>, required: true }
-  },
-  components: { Poster }
-});
+const { seiyuuList } = defineProps<{ seiyuuList: Array<ISeiyuuFound> }>();
 </script>
 
 <style lang="scss" scoped>

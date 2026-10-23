@@ -5,13 +5,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-export default defineComponent({
-  name: "NotFound"
-});
-</script>
-
 <style lang="scss" scoped>
 div {
   font-size: 1.2rem;

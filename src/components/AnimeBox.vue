@@ -1,9 +1,10 @@
 <template>
   <div class="anime-box">
-    <Poster :imageLink="anime.coverImage.extraLarge" />
+    <Poster :image-link="anime.coverImage.extraLarge" />
     <div class="anime-info" :style="{ backgroundImage: `url(${anime.bannerImage})` }">
       <div class="overlay">
         <h2>{{ anime.title.english || anime.title.romaji }}</h2>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <p v-html="anime.description" />
         <a target="_blank" :href="anime.siteUrl"> More Information </a>
       </div>
@@ -11,23 +12,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import Poster from "@/components/Poster.vue";
-import { IAnime } from "@/libs/interfaces/Anime";
-import { defineComponent, PropType } from "vue";
+import type { IAnime } from "@/libs/interfaces/Anime";
 
-export default defineComponent({
-  name: "AnimeBox",
-  components: {
-    Poster
-  },
-  props: {
-    anime: {
-      type: Object as PropType<IAnime>,
-      required: true
-    }
-  }
-});
+const { anime } = defineProps<{ anime: IAnime }>();
 </script>
 
 <style lang="scss" scoped>

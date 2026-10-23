@@ -2,14 +2,6 @@
   <div class="throbber">Loading...</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "Throbber"
-});
-</script>
-
 <style lang="scss" scoped>
 .throbber {
   font-size: 1rem;

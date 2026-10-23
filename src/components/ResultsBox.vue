@@ -6,21 +6,18 @@
   </div>
 </template>
 
-<script lang="ts">
-import { IAnime } from "@/libs/interfaces/Anime";
-import { defineComponent, PropType } from "vue";
+<script lang="ts" setup>
+import type { IAnime } from "@/libs/interfaces/Anime";
 
-export default defineComponent({
-  name: "ResultsBox",
-  props: {
-    results: { type: Array as PropType<Array<IAnime>>, required: true }
-  },
-  emits: ["select-anime"],
-  setup(props, { emit }) {
-    const selectResult = (result: IAnime) => emit("select-anime", result);
-    return { selectResult };
-  }
-});
+const { results } = defineProps<{ results: Array<IAnime> }>();
+
+const emit = defineEmits<{
+  "select-anime": [result: IAnime];
+}>();
+
+const selectResult = (result: IAnime) => {
+  emit("select-anime", result);
+};
 </script>
 
 <style lang="scss" scoped>

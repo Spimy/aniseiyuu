@@ -1,15 +1,9 @@
 <template>
-  <footer>
-    Copyright © 2020 - AniSeiyuu by Spimy
-  </footer>
+  <footer>Copyright © 2020-{{ year }} - AniSeiyuu by Spimy</footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "Footer"
-});
+<script lang="ts" setup>
+const year = new Date().getFullYear();
 </script>
 
 <style lang="scss" scoped>

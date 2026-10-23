@@ -1,16 +1,16 @@
 <template>
   <Header />
   <router-view />
-  <Footer />
+  <AppFooter />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 export default defineComponent({
-  components: { Header, Footer }
+  components: { Header, AppFooter }
 });
 </script>
 
@@ -20,7 +20,8 @@ export default defineComponent({
   font-style: normal;
   font-weight: normal;
   font-display: swap;
-  src: local("Insaniburger with Cheese"),
+  src:
+    local("Insaniburger with Cheese"),
     url("./assets/fonts/Insanibc.woff2") format("woff2");
 }
 
@@ -29,7 +30,8 @@ export default defineComponent({
   font-style: normal;
   font-weight: normal;
   font-display: swap;
-  src: local("Berlin Sans FB"),
+  src:
+    local("Berlin Sans FB"),
     url("./assets/fonts/Berlin Sans FB Regular.woff2") format("woff2");
 }
 
